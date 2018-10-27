@@ -98,12 +98,16 @@ void j1Map::PropagateDijkstra()
 				{
 					if (visited.find(neighbors[i]) == -1)
 					{
-						int cost = cost_so_far[neighbors[i].x][neighbors[i].y];
+						uint new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y);
 
-						frontier.Push(neighbors[i], cost);
-						visited.add(neighbors[i]);
-						breadcrumbs.add(curr);
+						if (new_cost < cost_so_far[neighbors[i].x][neighbors[i].y] || cost_so_far[neighbors[i].x][neighbors[i].y] == 0)
+						{
+							cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost;
+							frontier.Push(neighbors[i], new_cost);
+							visited.add(neighbors[i]);
+							breadcrumbs.add(curr);
 
+						}
 					}
 				}
 			}
@@ -120,7 +124,7 @@ int j1Map::MovementCost(int x, int y) const
 		int id = data.layers.start->next->data->Get(x, y);
 
 		if (id == 0)// grass
-			ret = 3;
+			ret = 5;
 		else //watter
 			ret = 0;
 	}
@@ -151,19 +155,19 @@ void j1Map::PropagateBFS()
 					break;
 				}
 
-				if (MovementCost(neighbors[i].x, neighbors[i].y) > 0)
+				if (MovementCost(neighbors[i].x, neighbors[i].y) >= 0)
 				{
 					if (visited.find(neighbors[i]) == -1)
 					{
-						frontier.Push(neighbors[i], 0);
-						visited.add(neighbors[i]);
-						breadcrumbs.add(curr);
-
+						
+							frontier.Push(neighbors[i], 0);
+							visited.add(neighbors[i]);
+							breadcrumbs.add(curr);
 					}
 				}
 			}
 		}
-	}	
+	}
 }
 
 void j1Map::DrawPath()
